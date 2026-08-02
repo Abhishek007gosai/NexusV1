@@ -363,15 +363,21 @@ def force_sub(func):
                 
                 buttons.append(InlineKeyboardButton("» 𝙹𝙾𝙸𝙽 𝙲𝙷𝙰𝙽𝙽𝙴𝙻 «", url=channel_link))
 
-        # Add "Try Again" button if needed
+        # Arrange join channel buttons 2 per row; if an odd one is left over,
+        # it gets its own full-width row
+        rows = []
+        for i in range(0, len(buttons), 2):
+            pair = buttons[i:i + 2]
+            rows.append(pair)
+
+        # Add "Try Again" button if needed (always full-width, own row)
         from_link = message.text.split(" ")
         if len(from_link) > 1:
             try_again_link = f"https://t.me/{client.username}/?start={from_link[1]}"
-            buttons.append(InlineKeyboardButton("🔄 Try Again", url=try_again_link))
+            rows.append([InlineKeyboardButton("🔄 Try Again", url=try_again_link)])
 
-        # Organize buttons in rows of 1 for better readability
-        buttons_markup = InlineKeyboardMarkup([[button] for button in buttons])
-        buttons_markup = None if not buttons else buttons_markup
+        buttons_markup = InlineKeyboardMarkup(rows)
+        buttons_markup = None if not rows else buttons_markup
 
         # Edit message with status update and buttons
         try:
@@ -430,7 +436,7 @@ async def auto_del_notification(bot_username, msg, delay_time, transfer):
             try:
                 name = "• ɢᴇᴛ ᴀɢᴀɪɴ •"
                 link = f"https://t.me/{bot_username}?start={transfer}"
-                button = [[InlineKeyboardButton(text=name, url=link), InlineKeyboardButton(text="ᴄʟᴏsᴇ •", callback_data = "close")]]
+                button = [[InlineKeyboardButton(text=f"{name}", url=link), InlineKeyboardButton(text="ᴄʟᴏsᴇ •", callback_data = "close")]]
 
                 await temp.edit_text(text=f"<b>ᴘʀᴇᴠɪᴏᴜs ᴍᴇssᴀɢᴇ ᴡᴀs ᴅᴇʟᴇᴛᴇᴅ<blockquote>ɪғ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ɢᴇᴛ ᴛʜᴇ ғɪʟᴇs ᴀɢᴀɪɴ, ᴛʜᴇɴ ᴄʟɪᴄᴋ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ ᴛᴏ ɢᴇᴛ ʏᴏᴜʀ ᴅᴇʟᴇᴛᴇᴅ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ. ᴇʟsᴇ ᴄʟᴏsᴇ ᴛʜɪs ᴍᴇssᴀɢᴇ.</blockquote></b>", reply_markup=InlineKeyboardMarkup(button), disable_web_page_preview = True)
 
@@ -484,7 +490,7 @@ async def batch_auto_del_notification(bot_username, messages, delay_time, transf
             try:
                 name = "• ɢᴇᴛ ғɪʟᴇs •"
                 link = f"https://t.me/{bot_username}?start={transfer_link}"
-                button = [[InlineKeyboardButton(text=name, url=link), InlineKeyboardButton(text="ᴄʟᴏsᴇ •", callback_data="close")]]
+                button = [[InlineKeyboardButton(text=f"{name}", url=link), InlineKeyboardButton(text="ᴄʟᴏsᴇ •", callback_data="close")]]
                 
                 await notification_msg.edit_text(
                     text=f"<b>ᴘʀᴇᴠɪᴏᴜs ᴍᴇssᴀɢᴇ ᴡᴀs ᴅᴇʟᴇᴛᴇᴅ<blockquote>ɪғ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ɢᴇᴛ ᴛʜᴇ ғɪʟᴇs ᴀɢᴀɪɴ, ᴛʜᴇɴ ᴄʟɪᴄᴋ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ ᴛᴏ ɢᴇᴛ ʏᴏᴜʀ ᴅᴇʟᴇᴛᴇᴅ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ. ᴇʟsᴇ ᴄʟᴏsᴇ ᴛʜɪs ᴍᴇssᴀɢᴇ.</blockquote></b>",
